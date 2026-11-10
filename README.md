@@ -9,7 +9,8 @@ O planejamento, as decisões e as regras de negócio ficam no vault `C:\Apps\53-
 | Pasta | O que tem | Estado |
 |---|---|---|
 | `nucleo/` | Regras de negócio puras (TypeScript, sem dependências): menu, protocolo, encaminhamento, chegada, alerta, respostas rápidas, RH e Dono | portado do protótipo, 18 testes |
-| `supabase/migrations/` | Esquema do banco | rascunho, não aplicado |
+| `supabase/migrations/` | Esquema do banco | aplicado em 10/11/2026 (`npm run migrar`) |
+| `scripts/migrar.mjs` | Aplica as migrações pendentes usando `SUPABASE_DB_URL` do `.env` | pronto |
 | `supabase/functions/webhook/` | Recebe os eventos da Meta e envia mensagens | a fazer (ticket wf-pabxzap-20) |
 | `portal/` | Portal React/Vite | a fazer (ticket wf-pabxzap-23) |
 | `docs/` | Rascunhos de apoio (App Review etc.) | em andamento |

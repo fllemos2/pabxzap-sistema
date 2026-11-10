@@ -5,9 +5,13 @@
   "type": "module",
   "description": "PabxZap: central de distribuição de atendimento via WhatsApp (Laboratório João Emídio). FL² Engenharia e Sistemas.",
   "scripts": {
-    "test": "node --test nucleo/*.test.ts"
+    "test": "node --test nucleo/*.test.ts",
+    "migrar": "node --env-file=.env scripts/migrar.mjs"
   },
   "engines": {
     "node": ">=22.18"
+  },
+  "devDependencies": {
+    "pg": "^8.23.1"
   }
 }
