@@ -1,0 +1,13 @@
+{
+  "name": "pabxzap-sistema",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "PabxZap: central de distribuição de atendimento via WhatsApp (Laboratório João Emídio). FL² Engenharia e Sistemas.",
+  "scripts": {
+    "test": "node --test nucleo/*.test.ts"
+  },
+  "engines": {
+    "node": ">=22.18"
+  }
+}
