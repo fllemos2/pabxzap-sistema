@@ -173,7 +173,8 @@ async function video1(d, servidor, conta) {
   await d.legenda('Opening WhatsApp Web of the test recipient in a new tab…');
   await espera(2200);
   await d.novaAba(url, async (p) => {
-    await p.waitForSelector('#main .message-in', { timeout: 120_000 }).catch(async () => {
+    // O WhatsApp Web não usa mais a classe .message-in; cada mensagem é um [role="row"] dentro de #main.
+    await p.locator(MSG_HELLO).last().waitFor({ timeout: 120_000 }).catch(async () => {
       if (await p.locator('canvas[aria-label*="QR" i], [data-ref]').count()) {
         throw new Error('O WhatsApp Web pediu o QR code: rode npm run video:login e entre de novo.');
       }
@@ -184,9 +185,11 @@ async function video1(d, servidor, conta) {
   await espera(3500);
 
   await d.legenda('The message is delivered to the recipient’s WhatsApp', { posicao: 'esquerda' });
-  await d.apontar(d.pagina.locator('#main .message-in').last(), { ms: 5000 });
+  await d.apontar(d.pagina.locator(MSG_HELLO).last(), { ms: 5000 });
   d.encerrar();
 }
+
+const MSG_HELLO = '#main [role="row"]:has-text("Hello World")';
 
 async function video2(d, servidor, conta) {
   await abrirConsole(d, servidor);
