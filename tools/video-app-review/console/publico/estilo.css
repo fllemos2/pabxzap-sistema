@@ -1,0 +1,87 @@
+:root {
+  --fundo: #f3f5f7;
+  --cartao: #ffffff;
+  --texto: #14202b;
+  --suave: #5b6875;
+  --borda: #d8dee4;
+  --topo: #12303f;
+  --acento: #0f7d6b;
+  --acento-escuro: #0b5e51;
+  --amarelo: #fff4c2;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--texto);
+  background: var(--fundo);
+  min-height: 100vh;
+  padding-bottom: 190px; /* espaço livre para a legenda do vídeo */
+}
+code { font-family: Consolas, "Cascadia Mono", monospace; font-size: 0.95em; }
+
+.topo {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--topo); color: #fff; padding: 18px 48px;
+}
+.topo h1 { margin: 0; font-size: 34px; font-weight: 700; }
+.topo .leve { font-weight: 400; opacity: 0.8; }
+.topo .sub { margin: 2px 0 0; font-size: 20px; opacity: 0.75; }
+.selo { background: #ffcf33; color: #2b2100; font-weight: 700; font-size: 18px; padding: 8px 14px; border-radius: 8px; }
+
+.abas { display: flex; gap: 8px; padding: 0 48px; background: #fff; border-bottom: 1px solid var(--borda); }
+.aba {
+  font: inherit; font-size: 24px; font-weight: 600; color: var(--suave);
+  background: none; border: none; border-bottom: 5px solid transparent;
+  padding: 16px 28px 12px; cursor: pointer; text-align: left;
+}
+.aba small { display: block; font-size: 16px; font-weight: 400; font-family: Consolas, monospace; }
+.aba.ativa { color: var(--acento-escuro); border-bottom-color: var(--acento); }
+
+main { padding: 28px 48px; }
+.painel { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+.painel[hidden] { display: none; }
+.coluna { display: grid; gap: 28px; }
+.cartao { background: var(--cartao); border: 1px solid var(--borda); border-radius: 14px; padding: 26px 32px; box-shadow: 0 2px 6px rgba(0,0,0,.05); }
+.cartao h2 { margin: 0 0 18px; font-size: 27px; }
+
+.campo { margin-bottom: 20px; }
+.campo label { display: block; font-size: 18px; font-weight: 600; color: var(--suave); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+.valor { font: inherit; width: 100%; padding: 12px 16px; border: 1px solid var(--borda); border-radius: 10px; background: #fafbfc; color: var(--texto); }
+input.valor { font-size: 26px; letter-spacing: .06em; }
+.dica { margin: 6px 0 0; font-size: 18px; color: var(--suave); }
+
+.botao {
+  font: inherit; font-size: 26px; font-weight: 700; color: #fff; background: var(--acento);
+  border: none; border-radius: 12px; padding: 16px 34px; margin-top: 8px; cursor: pointer;
+}
+.botao:hover { background: var(--acento-escuro); }
+.botao:disabled { opacity: .6; cursor: wait; }
+
+.resposta { font-size: 20px; }
+.resposta.vazia { color: var(--suave); }
+.resposta .linha-status { font-weight: 700; margin-bottom: 12px; }
+.resposta .ok { color: #0b7a3e; }
+.resposta .erro { color: #b42318; }
+.destaque { background: var(--amarelo); border: 2px solid #e2b500; border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; word-break: break-all; }
+.destaque b { display: block; font-size: 17px; text-transform: uppercase; letter-spacing: .04em; color: #6b5300; }
+.destaque code { font-size: 22px; }
+pre { margin: 0; background: #0f1b24; color: #d7e7f2; border-radius: 10px; padding: 16px 18px; font-size: 18px; line-height: 1.45; white-space: pre-wrap; word-break: break-all; max-height: 330px; overflow: auto; }
+
+.ficha { margin: 0 0 12px; }
+.ficha > div { display: grid; grid-template-columns: 190px 1fr; gap: 16px; padding: 10px 6px; border-bottom: 1px solid #eef1f4; border-radius: 8px; }
+.ficha dt { font-weight: 600; color: var(--suave); }
+.ficha dd { margin: 0; }
+.corpo { background: #e7f6ef; border-radius: 10px; padding: 10px 14px; }
+.var { background: #cfe9ff; color: #0b3d66; border-radius: 6px; padding: 0 6px; font-family: Consolas, monospace; font-size: .92em; }
+.chip { display: inline-block; font-size: 18px; font-weight: 700; padding: 3px 12px; border-radius: 999px; background: #e3e8ee; }
+.chip.pendente { background: #fff1c2; color: #6b5300; }
+.chip.aprovado { background: #d3f3df; color: #0b5e2e; }
+.chip.recusado { background: #fde0dc; color: #8a1c12; }
+
+.tabela { width: 100%; border-collapse: collapse; font-size: 20px; }
+.tabela th { text-align: left; font-size: 17px; text-transform: uppercase; color: var(--suave); padding: 8px 10px; border-bottom: 2px solid var(--borda); }
+.tabela td { padding: 10px; border-bottom: 1px solid #eef1f4; }
+.tabela tr.novo td { background: #fffbe6; }

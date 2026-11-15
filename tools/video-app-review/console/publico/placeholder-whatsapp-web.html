@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Placeholder – WhatsApp Web (rehearsal)</title>
+  <!-- Só para o modo ensaio. Imita a estrutura do WhatsApp Web (#side, #pane-side, #main)
+       para testar o CSS que desfoca a lista de conversas. Os números abaixo são fictícios. -->
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; font-family: "Segoe UI", system-ui, sans-serif; font-size: 20px; }
+    #app { display: flex; height: 100vh; background: #efeae2; }
+    #side { width: 32%; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
+    #side > header { display: flex; align-items: center; gap: 14px; padding: 14px 20px; background: #f0f2f5; }
+    .avatar { width: 52px; height: 52px; border-radius: 50%; background: #9fb4c2; flex: none; }
+    #pane-side { overflow: hidden; }
+    [role="listitem"] > div { display: flex; gap: 14px; align-items: center; padding: 14px 20px; border-bottom: 1px solid #f0f0f0; }
+    [aria-selected="true"] { background: #e9edef; }
+    .nome { font-weight: 600; }
+    .previa { color: #667781; font-size: 18px; }
+    #main { flex: 1; display: flex; flex-direction: column; }
+    #main > header { display: flex; align-items: center; gap: 14px; padding: 14px 24px; background: #f0f2f5; }
+    .mensagens { flex: 1; padding: 30px 8%; display: flex; flex-direction: column; justify-content: flex-start; }
+    .message-in { align-self: flex-start; max-width: 60%; background: #fff; border-radius: 10px; padding: 14px 18px; box-shadow: 0 1px 1px rgba(0,0,0,.1); }
+    .message-in h4 { margin: 0 0 8px; font-size: 22px; }
+    .message-in small { display: block; color: #667781; margin-top: 8px; }
+    .rodape { padding: 16px 24px; background: #f0f2f5; color: #8696a0; }
+    .aviso { position: fixed; top: 8px; right: 12px; background: #ffcf33; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div class="aviso">PLACEHOLDER (rehearsal) – stands in for web.whatsapp.com</div>
+  <div id="app">
+    <div id="side">
+      <header><div class="avatar"></div><div><div class="nome">My profile</div><div class="previa">+55 11 98888-7777</div></div></header>
+      <div id="pane-side" aria-label="Chat list">
+        <div role="listitem"><div aria-selected="true"><div class="avatar"></div><div><div class="nome" id="nome-teste">Test Number</div><div class="previa">Hello World</div></div></div></div>
+        <div role="listitem"><div aria-selected="false"><div class="avatar"></div><div><div class="nome">Maria Silva</div><div class="previa">+55 21 97777-1111 · ok, obrigado</div></div></div></div>
+        <div role="listitem"><div aria-selected="false"><div class="avatar"></div><div><div class="nome">+55 11 96666-2222</div><div class="previa">Bom dia!</div></div></div></div>
+        <div role="listitem"><div aria-selected="false"><div class="avatar"></div><div><div class="nome">Family</div><div class="previa">Photo</div></div></div></div>
+        <div role="listitem"><div aria-selected="false"><div class="avatar"></div><div><div class="nome">João Souza</div><div class="previa">+55 31 95555-3333</div></div></div></div>
+      </div>
+    </div>
+    <div id="main">
+      <header><div class="avatar"></div><div><div class="nome" id="cabecalho-teste">Test Number</div><div class="previa">business account</div></div></header>
+      <div class="mensagens">
+        <div class="message-in">
+          <h4>Hello World</h4>
+          Welcome and congratulations!! This message demonstrates your ability to send a WhatsApp message notification from the Cloud API, hosted by Meta. Thank you for taking the time to test with us.
+          <small>WhatsApp Business Platform sample message</small>
+        </div>
+      </div>
+      <div class="rodape">Type a message</div>
+    </div>
+  </div>
+  <script>
+    const tel = new URLSearchParams(location.search).get('phone');
+    if (tel) document.getElementById('cabecalho-teste').textContent = 'Test Number · +' + tel;
+  </script>
+</body>
+</html>

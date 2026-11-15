@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PabxZap – Admin console (test number)</title>
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <header class="topo">
+    <div>
+      <h1>PabxZap – Admin console <span class="leve">(test number)</span></h1>
+      <p class="sub">FL² Engenharia e Sistemas · WhatsApp Cloud API</p>
+    </div>
+    <span id="selo-ensaio" class="selo" hidden>REHEARSAL · simulated responses</span>
+  </header>
+
+  <nav class="abas" role="tablist">
+    <button id="aba-messaging" class="aba ativa" role="tab" data-aba="messaging">
+      Messaging <small>whatsapp_business_messaging</small>
+    </button>
+    <button id="aba-templates" class="aba" role="tab" data-aba="templates">
+      Templates <small>whatsapp_business_management</small>
+    </button>
+  </nav>
+
+  <main>
+    <!-- Aba Messaging -->
+    <section id="painel-messaging" class="painel">
+      <div class="cartao">
+        <h2>Send a test message</h2>
+        <div class="campo">
+          <label>From (our WhatsApp test number)</label>
+          <div id="campo-remetente" class="valor">…</div>
+        </div>
+        <div class="campo">
+          <label for="campo-destinatario">To (test recipient)</label>
+          <input id="campo-destinatario" class="valor" readonly value="…">
+          <p class="dica">Phone number partially hidden for privacy.</p>
+        </div>
+        <div class="campo">
+          <label>Message template</label>
+          <div class="valor"><code>hello_world</code> · English (US) · sample template approved by Meta</div>
+        </div>
+        <button id="btn-enviar" class="botao">Send test message</button>
+        <p class="dica">Calls <code>POST /{phone-number-id}/messages</code> on the WhatsApp Cloud API.</p>
+      </div>
+
+      <div class="cartao">
+        <h2>API response</h2>
+        <div id="resposta-envio" class="resposta vazia">No request yet.</div>
+      </div>
+    </section>
+
+    <!-- Aba Templates -->
+    <section id="painel-templates" class="painel" hidden>
+      <div class="cartao">
+        <h2>New template: <code id="t-nome">pabxzap_resgate</code></h2>
+        <dl class="ficha">
+          <div id="campo-categoria"><dt>Category</dt><dd><span class="chip">Utility</span></dd></div>
+          <div id="campo-idioma"><dt>Language</dt><dd>Portuguese (Brazil) · <code>pt_BR</code></dd></div>
+          <div id="campo-corpo"><dt>Body</dt><dd id="t-corpo" class="corpo"></dd></div>
+          <div id="campo-exemplos"><dt>Sample values</dt><dd id="t-exemplos"></dd></div>
+          <div id="campo-botao"><dt>Button</dt><dd id="t-botao"></dd></div>
+        </dl>
+        <button id="btn-criar" class="botao">Create template</button>
+        <p class="dica">Calls <code>POST /{waba-id}/message_templates</code> and submits the template for Meta's review.</p>
+      </div>
+
+      <div class="coluna">
+        <div class="cartao">
+          <h2>API response</h2>
+          <div id="resposta-criacao" class="resposta vazia">No request yet.</div>
+        </div>
+        <div class="cartao">
+          <h2>Message templates in our WhatsApp Business Account</h2>
+          <table id="lista-templates" class="tabela">
+            <thead><tr><th>Name</th><th>Category</th><th>Language</th><th>Status</th></tr></thead>
+            <tbody><tr><td colspan="4" class="dica">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

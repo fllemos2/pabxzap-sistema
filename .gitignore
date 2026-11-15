@@ -7,3 +7,5 @@ supabase/.temp/
 supabase/.branches/
 *.log
 .DS_Store
+tools/video-app-review/.perfil/
+tools/video-app-review/saida/
