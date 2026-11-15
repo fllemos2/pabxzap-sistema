@@ -44,7 +44,7 @@ export function mascararTelefone(numero) {
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export function criarMeta({ ensaio, env = process.env, log = console.log }) {
-  const { META_APP_ID, META_APP_SECRET, META_TEST_ACCESS_TOKEN, META_TEST_PHONE_NUMBER_ID } = env;
+  const { META_APP_ID, META_APP_SECRET, META_TEST_ACCESS_TOKEN, META_TEST_PHONE_NUMBER_ID, META_WABA_ID } = env;
   const destinatario = so_digitos(env.META_TEST_RECIPIENT) || (ensaio ? '5511900001234' : '');
   const segredos = [META_APP_SECRET, META_TEST_ACCESS_TOKEN].filter((s) => s && s.length >= 8);
 
@@ -84,8 +84,9 @@ export function criarMeta({ ensaio, env = process.env, log = console.log }) {
     });
     if (!debug.ok || !debug.dados.data?.is_valid) throw new Error('Token inválido ou vencido. Gere outro em WhatsApp › API Setup.');
     const escopos = debug.dados.data.granular_scopes ?? [];
-    const waba = escopos.find((e) => e.scope === 'whatsapp_business_management')?.target_ids?.[0];
-    if (!waba) throw new Error('O token não alcança nenhuma conta do WhatsApp (WABA).');
+    // Tokens da página de teste podem vir sem target_ids; nesse caso usa META_WABA_ID.
+    const waba = escopos.find((e) => e.scope === 'whatsapp_business_management')?.target_ids?.[0] ?? META_WABA_ID;
+    if (!waba) throw new Error('O token não informa a conta do WhatsApp (WABA). Preencha META_WABA_ID no .env.');
     const num = await graph(`/${META_TEST_PHONE_NUMBER_ID}?fields=display_phone_number,verified_name`);
     const dono = await graph(`/${waba}?fields=owner_business_info`);
     cacheConta = {

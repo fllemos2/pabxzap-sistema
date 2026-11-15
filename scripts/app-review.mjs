@@ -5,7 +5,7 @@
 //   npm run app-review                      -> chamadas de leitura (whatsapp_business_management)
 //   npm run app-review -- --enviar 5511...  -> também envia o template hello_world (whatsapp_business_messaging)
 //
-// Lê do .env: META_APP_ID, META_APP_SECRET, META_TEST_ACCESS_TOKEN, META_TEST_PHONE_NUMBER_ID.
+// Lê do .env: META_APP_ID, META_APP_SECRET, META_TEST_ACCESS_TOKEN, META_TEST_PHONE_NUMBER_ID e, se preciso, META_WABA_ID.
 // Nunca imprime tokens. Não cria nem apaga nada na conta (o template do vídeo é criado pela tela).
 
 const VERSAO = 'v23.0'; // versão da Graph API; conferir a atual no App Dashboard se der erro de versão
@@ -37,11 +37,13 @@ const ok = (permissao, o) => console.log(`OK [${permissao}] ${o}`);
 const tokenApp = `${META_APP_ID}|${META_APP_SECRET}`;
 const debug = await graph(`/debug_token?input_token=${encodeURIComponent(META_TEST_ACCESS_TOKEN)}`, { token: tokenApp });
 const escopos = debug.data?.granular_scopes ?? [];
-const wabas = escopos.find((e) => e.scope === 'whatsapp_business_management')?.target_ids ?? [];
+// Tokens da página de teste podem vir sem target_ids; nesse caso usa META_WABA_ID ("Messaging account ID").
+const alvos = escopos.find((e) => e.scope === 'whatsapp_business_management')?.target_ids ?? [];
+const wabas = alvos.length ? alvos : (process.env.META_WABA_ID ? [process.env.META_WABA_ID] : []);
 console.log(`token válido: ${debug.data?.is_valid}; vence: ${debug.data?.expires_at ? new Date(debug.data.expires_at * 1000).toLocaleString('pt-BR') : 'não informado'}`);
 console.log(`permissões do token: ${escopos.map((e) => e.scope).join(', ') || '(nenhuma)'}`);
 if (!wabas.length) {
-  console.error('O token não alcança nenhuma conta do WhatsApp. Gere outro em WhatsApp › API Setup.');
+  console.error('O token não informa a conta do WhatsApp. Preencha META_WABA_ID no .env ("Messaging account ID" em Step 1. Try it out).');
   process.exit(1);
 }
 
