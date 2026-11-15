@@ -104,11 +104,12 @@ function realcarVariaveis(texto) {
   $('#campo-destinatario').value = e.destinatario;
 
   const corpo = e.template.components.find((c) => c.type === 'BODY');
-  const botao = e.template.components.find((c) => c.type === 'BUTTONS').buttons[0];
+  const botao = e.template.components.find((c) => c.type === 'BUTTONS')?.buttons?.[0];
+  $('#campo-botao').style.display = botao ? '' : 'none';
   $('#t-nome').textContent = e.template.name;
   $('#t-corpo').innerHTML = realcarVariaveis(corpo.text);
   const [v1, v2] = corpo.example.body_text[0];
   $('#t-exemplos').innerHTML = `<span class="var">{{1}}</span> = <code>${esc(v1)}</code> (ticket number)<br><span class="var">{{2}}</span> = <code>${esc(v2)}</code> (department)`;
-  $('#t-botao').innerHTML = `Visit website · “${esc(botao.text)}” → <code>${realcarVariaveis(botao.url)}</code><br><span class="dica">Sample: <code>${esc(botao.example[0])}</code></span>`;
+  if (botao) $('#t-botao').innerHTML = `Visit website · “${esc(botao.text)}” → <code>${realcarVariaveis(botao.url)}</code><br><span class="dica">Sample: <code>${esc(botao.example[0])}</code></span>`;
   document.body.dataset.pronto = '1';
 })();

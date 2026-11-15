@@ -6,6 +6,7 @@ const VERSAO = 'v23.0'; // a mesma de scripts/app-review.mjs
 const BASE = `https://graph.facebook.com/${VERSAO}`;
 
 // Definição do template do vídeo 2 (roteiro em docs/app-review.md).
+// Sem botão: a Meta recusa botão de URL para wa.me ("Direct links to WhatsApp aren't allowed for buttons", 15/11/2026).
 export const TEMPLATE_RESGATE = {
   name: 'pabxzap_resgate',
   category: 'UTILITY',
@@ -13,19 +14,8 @@ export const TEMPLATE_RESGATE = {
   components: [
     {
       type: 'BODY',
-      text: 'Olá! Seu atendimento {{1}} com o setor {{2}} ainda está aberto. Toque no botão abaixo para continuar a conversa.',
+      text: 'Olá! Seu atendimento {{1}} com o setor {{2}} ainda está aberto. Responda esta mensagem para continuar a conversa.',
       example: { body_text: [['20261110-0042', 'Financeiro']] },
-    },
-    {
-      type: 'BUTTONS',
-      buttons: [
-        {
-          type: 'URL',
-          text: 'Continuar',
-          url: 'https://wa.me/{{1}}',
-          example: ['https://wa.me/5511999999999?text=Protocolo%2020261110-0042'],
-        },
-      ],
     },
   ],
 };

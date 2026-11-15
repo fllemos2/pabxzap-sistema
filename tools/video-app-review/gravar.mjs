@@ -207,7 +207,7 @@ async function video2(d, servidor, conta) {
   await d.apontar('#lista-templates', { ms: 3200 });
   await d.tirarRealce();
 
-  await d.legenda('Creating the utility template our app uses to resend the forwarding link');
+  await d.legenda('Creating the utility template our app uses to remind a customer of an open ticket');
   await d.apontar('#t-nome', { ms: 3500 });
 
   await d.legenda('Category: Utility. Language: Portuguese (Brazil)');
@@ -220,8 +220,10 @@ async function video2(d, servidor, conta) {
   await d.legenda('Sample values for the variables');
   await d.apontar('#campo-exemplos', { ms: 3500 });
 
-  await d.legenda('Button that opens the chat with the department');
-  await d.apontar('#campo-botao', { ms: 4000 });
+  if (await d.pagina.locator('#campo-botao').isVisible()) {
+    await d.legenda('Button that opens the chat with the department');
+    await d.apontar('#campo-botao', { ms: 4000 });
+  }
   await d.tirarRealce();
 
   await d.legenda('“Create template” submits the template to Meta for approval');

@@ -9,3 +9,6 @@ supabase/.branches/
 .DS_Store
 tools/video-app-review/.perfil/
 tools/video-app-review/saida/
+
+# Documentos do cliente (não versionar)
+docs/*.docx
