@@ -22,7 +22,8 @@ Rascunho de 24/10/2026, revisado em 10/11 e em 15/11/2026 pelo agente. Base: pes
 | Chamada de `whatsapp_business_management` | Feita em 15/11 (leituras do `npm run app-review` e criação do template do vídeo 2); vale até 15/12 |
 | Template de demonstração | `pabxzap_resgate` criado em 15/11 na conta de teste, sem botão (id 1139284682145891) |
 | Os dois vídeos | Gravados em 15/11: `tools/video-app-review/saida/video-1-messaging.mp4` e `video-2-management.mp4` (1920×1080, sem áudio, legendas em inglês) |
-| Só as permissões necessárias | Pedir apenas `whatsapp_business_messaging` e `whatsapp_business_management` |
+| Permissões pedidas | `whatsapp_business_messaging`, `whatsapp_business_management` e `public_profile` (este veio do caso de uso *Facebook Login for Business*; mantido por causa do Embedded Signup) |
+| Submissão | **Enviada em 15/11/2026.** Status *Review in progress*; a Meta indica até 20 dias (cerca de 05/12) |
 
 ## Textos (em inglês, para colar nos campos)
 
@@ -59,6 +60,14 @@ Os nomes dos menus mudam com frequência; seguir o que a tela pedir.
    - marcar as declarações de uso pedidas.
 4. Conferir que as duas chamadas de API aparecem como feitas e clicar em **Submit for review**.
 5. Acompanhar em *App Review › Requests*. Se a Meta pedir ajuste, responder pelo próprio pedido.
+
+### Como foi preenchido em 15/11/2026 (para reenvio ou correção)
+
+- **Plataforma:** *Website*, Site URL `https://fl2engsys.com.br/` (exigida para liberar *Reviewer instructions*). Trocar pelo endereço do portal quando ele estiver no ar.
+- **Data handling:** um processador, `Supabase, Inc.` (hospedagem/armazenamento e processamento; país da região do projeto + United States). Responsável pelos dados: FABIO DE LIMA LEMOS (FL² Engenharia e Sistemas), CNPJ 40.257.611/0001-34, Brazil. Pedidos de autoridades nos últimos 12 meses: *No*. Políticas marcadas: revisão da legalidade, contestação de pedidos ilegais, minimização de dados e documentação dos pedidos.
+- **Reviewer instructions:** *Is Facebook Login integrated?* **No**, porque o Embedded Signup ainda não foi implementado. O texto explica que o site é institucional e que o portal é privado e está em desenvolvimento, lista as APIs usadas e diz que o Facebook Login for Business será usado só no Embedded Signup, apenas com `public_profile`.
+- **Campos opcionais:** sem credenciais de teste ("Not applicable"), sem geo-blocking (atende empresas no Brasil), e os dois vídeos anexados também em *supporting documentation*.
+- **Risco conhecido:** o `public_profile` pode ser recusado porque o Facebook Login ainda não existe no site. Isso não afeta as duas permissões do WhatsApp; pedir de novo com um vídeo do Embedded Signup quando ele estiver pronto.
 
 ## Depois do App Review: Access Verification
 
