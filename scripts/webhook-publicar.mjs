@@ -79,14 +79,14 @@ try {
     `PABX_DB_KEY=${e.SUPABASE_SERVICE_ROLE_KEY}`,
     `PABX_RESPONDER_TESTE=1`,
   ].join('\n') + '\n', { mode: 0o600 });
-  supabase(['secrets', 'set', '--env-file', arq, '--project-ref', ref]);
+  supabase(['secrets', 'set', '--env-file', arq, `--remote=${ref}`, '--yes']);
 } finally {
   rmSync(pasta, { recursive: true, force: true });
 }
 console.log('2. chaves gravadas no Supabase');
 
 // 3. Deploy
-supabase(['functions', 'deploy', 'webhook', '--no-verify-jwt', '--project-ref', ref]);
+supabase(['functions', 'deploy', 'webhook', '--no-verify-jwt', `--remote=${ref}`, '--yes']);
 console.log(`3. função publicada em ${callback}`);
 
 // 4. Webhook do app na Meta (token de app)
