@@ -1,4 +1,4 @@
-// Lógica pura do webhook da Meta (ticket wf-pabxzap-20).
+// Lógica pura do webhook da Meta (tickets wf-pabxzap-20 e 22).
 // Sem Deno, sem banco e sem rede: tudo aqui roda no Node (testes) e no Deno (Edge Function).
 
 /** Mensagem recebida de um cliente, já extraída do payload da Meta. */
@@ -7,9 +7,18 @@ export type MensagemRecebida = {
   de: string;            // wa_id do cliente (só dígitos)
   waMessageId: string;   // id da mensagem (wamid...), usado para não processar duas vezes
   tipo: string;          // text, image, interactive...
-  texto: string | null;  // texto, legenda ou título da opção escolhida
+  texto: string | null;  // texto, legenda, título do botão ou número da opção escolhida no menu
   nome: string | null;   // nome do perfil do cliente, se veio
   em: Date;              // horário informado pela Meta
+};
+
+/** Mensagem enviada por um atendente pelo app do WhatsApp Business (coexistência: smb_message_echoes). */
+export type EcoDoApp = {
+  phoneNumberId: string;
+  para: string;          // cliente
+  waMessageId: string;
+  texto: string | null;
+  em: Date;
 };
 
 /**
@@ -36,31 +45,45 @@ export async function assinaturaValida(corpoCru: string, cabecalho: string | nul
   return dif === 0;
 }
 
-/** Extrai as mensagens de clientes de um payload do objeto whatsapp_business_account. Ignora status e outros campos. */
-export function extrairMensagens(payload: unknown): MensagemRecebida[] {
+const so = (s: unknown) => String(s ?? '').replace(/\D/g, '');
+const quando = (ts: unknown) => (ts ? new Date(Number(ts) * 1000) : new Date());
+
+function mudancas(payload: unknown, campo: string): any[] {
   const p = payload as any;
   if (p?.object !== 'whatsapp_business_account') return [];
+  const saida: any[] = [];
+  for (const entrada of p.entry ?? []) for (const m of entrada.changes ?? []) if (m.field === campo && m.value) saida.push(m.value);
+  return saida;
+}
+
+/** Extrai as mensagens de clientes (campo messages). Ignora status e outros campos. */
+export function extrairMensagens(payload: unknown): MensagemRecebida[] {
   const saida: MensagemRecebida[] = [];
-  for (const entrada of p.entry ?? []) {
-    for (const mudanca of entrada.changes ?? []) {
-      if (mudanca.field !== 'messages') continue;
-      const v = mudanca.value ?? {};
-      const phoneNumberId = v.metadata?.phone_number_id;
-      if (!phoneNumberId) continue;
-      const nomes = new Map<string, string>();
-      for (const c of v.contacts ?? []) if (c.wa_id) nomes.set(c.wa_id, c.profile?.name ?? null);
-      for (const m of v.messages ?? []) {
-        if (!m.id || !m.from) continue;
-        saida.push({
-          phoneNumberId,
-          de: String(m.from).replace(/\D/g, ''),
-          waMessageId: m.id,
-          tipo: m.type ?? 'desconhecido',
-          texto: textoDa(m),
-          nome: nomes.get(m.from) ?? null,
-          em: m.timestamp ? new Date(Number(m.timestamp) * 1000) : new Date(),
-        });
-      }
+  for (const v of mudancas(payload, 'messages')) {
+    const phoneNumberId = v.metadata?.phone_number_id;
+    if (!phoneNumberId) continue;
+    const nomes = new Map<string, string>();
+    for (const c of v.contacts ?? []) if (c.wa_id) nomes.set(c.wa_id, c.profile?.name ?? null);
+    for (const m of v.messages ?? []) {
+      if (!m.id || !m.from) continue;
+      saida.push({
+        phoneNumberId, de: so(m.from), waMessageId: m.id, tipo: m.type ?? 'desconhecido',
+        texto: textoDa(m), nome: nomes.get(m.from) ?? null, em: quando(m.timestamp),
+      });
+    }
+  }
+  return saida;
+}
+
+/** Extrai as mensagens enviadas pelo app do WhatsApp Business (campo smb_message_echoes, só em coexistência). */
+export function extrairEcos(payload: unknown): EcoDoApp[] {
+  const saida: EcoDoApp[] = [];
+  for (const v of mudancas(payload, 'smb_message_echoes')) {
+    const phoneNumberId = v.metadata?.phone_number_id;
+    if (!phoneNumberId) continue;
+    for (const m of v.message_echoes ?? []) {
+      if (!m.id || !m.to) continue;
+      saida.push({ phoneNumberId, para: so(m.to), waMessageId: m.id, texto: textoDa(m), em: quando(m.timestamp) });
     }
   }
   return saida;
@@ -69,33 +92,15 @@ export function extrairMensagens(payload: unknown): MensagemRecebida[] {
 function textoDa(m: any): string | null {
   switch (m.type) {
     case 'text': return m.text?.body ?? null;
-    case 'interactive':
+    case 'interactive': {
+      // Opção do menu: o id da linha é "opcao-N"; o núcleo espera o número N.
+      const id: string | undefined = m.interactive?.list_reply?.id;
+      const n = id?.match(/^opcao-(\d+)$/)?.[1];
+      if (n) return n;
       return m.interactive?.list_reply?.title ?? m.interactive?.button_reply?.title ?? null;
+    }
     case 'button': return m.button?.text ?? null;
     case 'image': case 'video': case 'document': return m[m.type]?.caption ?? null;
     default: return null;
   }
-}
-
-/** Resposta fixa da fase de teste (o menu de verdade entra no ticket wf-pabxzap-22). */
-export function respostaDeTeste(m: MensagemRecebida): string {
-  const trecho = m.texto ? `"${m.texto.length > 60 ? m.texto.slice(0, 57) + '...' : m.texto}"` : `uma mensagem (${m.tipo})`;
-  return `PabxZap (teste): recebemos ${trecho}. Esta é uma resposta automática do número de teste.`;
-}
-
-/**
- * Celulares do Brasil às vezes chegam no webhook sem o 9 depois do DDD (55 + DDD + 8 dígitos).
- * Devolve a forma com o 9, para tentar de novo quando o envio for recusado; ou null se não se aplica.
- */
-export function comNonoDigito(waId: string): string | null {
-  const d = waId.replace(/\D/g, '');
-  if (d.length !== 12 || !d.startsWith('55')) return null;
-  const local = d.slice(4);
-  if (!/^[6-9]/.test(local)) return null; // fixo não ganha o 9
-  return d.slice(0, 4) + '9' + local;
-}
-
-/** Corpo do POST /{phone-number-id}/messages para um texto simples. */
-export function corpoTexto(para: string, texto: string) {
-  return { messaging_product: 'whatsapp', recipient_type: 'individual', to: para, type: 'text', text: { preview_url: false, body: texto } };
 }

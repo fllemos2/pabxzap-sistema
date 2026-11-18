@@ -11,7 +11,9 @@ O planejamento, as decisões e as regras de negócio ficam no vault `C:\Apps\53-
 | `nucleo/` | Regras de negócio puras (TypeScript, sem dependências): menu, protocolo, encaminhamento, chegada, alerta, resgates, horário e feriados, respostas rápidas, RH e Dono | ajustado às decisões até 17/11, 34 testes |
 | `supabase/migrations/` | Esquema do banco | aplicado em 10/11/2026 (`npm run migrar`) |
 | `scripts/migrar.mjs` | Aplica as migrações pendentes usando `SUPABASE_DB_URL` do `.env` | pronto |
-| `supabase/functions/webhook/` | Recebe os eventos da Meta e envia mensagens | publicado; falta o token da Meta (ticket wf-pabxzap-20) |
+| `supabase/functions/webhook/` | Recebe os eventos da Meta, passa pelo núcleo e envia menu, link e avisos | publicado; falta o token da Meta (tickets wf-pabxzap-20 e 22) |
+| `supabase/functions/_compartilhado/` | Banco (PostgREST), envio pela Meta e o orquestrador `executarEvento` (protocolo atômico) | pronto, com testes |
+| `scripts/numeros-de-teste.mjs` | Fase de teste: o número de teste da Meta faz o papel da Recepção (`npm run numeros:teste`) | aplicado |
 | `portal/` | Portal React/Vite | a fazer (ticket wf-pabxzap-23) |
 | `docs/` | Rascunhos de apoio (App Review etc.) | em andamento |
 

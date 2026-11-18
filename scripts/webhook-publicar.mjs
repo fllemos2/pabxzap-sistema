@@ -1,8 +1,8 @@
-// Publica o webhook (ticket wf-pabxzap-20) e liga a Meta a ele, sem passar pelo painel.
+// Publica o webhook (tickets wf-pabxzap-20 e 22) e liga a Meta a ele, sem passar pelo painel.
 //
 // Uso: npm run webhook:publicar
 //
-// 1. Cadastra o número de teste em public.numeros (id 'teste'), para as mensagens terem a que se ligar.
+// 1. Confere que algum número de public.numeros está ligado ao número de teste (rode antes: npm run numeros:teste).
 // 2. Grava as chaves da função no Supabase (supabase secrets set).
 // 3. Publica a Edge Function `webhook` sem verificação de JWT (quem chama é a Meta).
 // 4. Configura o webhook do app na Meta (POST /{app-id}/subscriptions, campo messages); a Meta chama o GET de verificação na hora.
@@ -55,18 +55,13 @@ function supabase(args) {
   if (r.status !== 0) throw new Error(`supabase ${args[0]} ${args[1] ?? ''} falhou`);
 }
 
-// 1. Número de teste no banco
-const num = await graph(`/${e.META_TEST_PHONE_NUMBER_ID}`, { params: { fields: 'display_phone_number,verified_name' } });
+// 1. Número de teste ligado no banco
 const cliente = new pg.Client({ connectionString: e.SUPABASE_DB_URL, ssl: { rejectUnauthorized: false } });
 await cliente.connect();
-await cliente.query(
-  `insert into public.numeros (id, ordem, nome, telefone, atalho, phone_number_id)
-   values ('teste', 99, 'Número de teste (Meta)', $1, '#teste', $2)
-   on conflict (id) do update set telefone = excluded.telefone, phone_number_id = excluded.phone_number_id`,
-  [num.display_phone_number.replace(/\D/g, ''), e.META_TEST_PHONE_NUMBER_ID],
-);
+const ligado = (await cliente.query('select id from public.numeros where phone_number_id = $1', [e.META_TEST_PHONE_NUMBER_ID])).rows[0];
 await cliente.end();
-console.log(`1. número de teste cadastrado em numeros (id 'teste', ${num.verified_name})`);
+if (!ligado) { console.error('Nenhum número está ligado ao número de teste. Rode antes: npm run numeros:teste'); process.exit(1); }
+console.log(`1. número de teste ligado a '${ligado.id}' em numeros`);
 
 // 2. Chaves da função (arquivo temporário, apagado logo depois)
 const pasta = mkdtempSync(join(tmpdir(), 'pabxzap-'));
@@ -77,7 +72,7 @@ try {
     `META_APP_SECRET=${e.META_APP_SECRET}`,
     `META_ACCESS_TOKEN=${tokenMeta}`,
     `PABX_DB_KEY=${e.SUPABASE_SERVICE_ROLE_KEY}`,
-    `PABX_RESPONDER_TESTE=1`,
+    ...(e.PABX_LINK_POLITICA ? [`PABX_LINK_POLITICA=${e.PABX_LINK_POLITICA}`] : []),
   ].join('\n') + '\n', { mode: 0o600 });
   supabase(['secrets', 'set', '--env-file', arq, `--remote=${ref}`, '--yes']);
 } finally {
