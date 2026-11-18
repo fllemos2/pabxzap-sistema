@@ -1,0 +1,18 @@
+# Netlify (decisão 2026-11-17-portal-contas-e-hospedagem): portal.fl2engsys.com.br
+[build]
+  base = "portal"
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    X-Robots-Tag = "noindex"

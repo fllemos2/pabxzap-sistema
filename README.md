@@ -14,7 +14,8 @@ O planejamento, as decisões e as regras de negócio ficam no vault `C:\Apps\53-
 | `supabase/functions/webhook/` | Recebe os eventos da Meta, passa pelo núcleo e envia menu, link e avisos | publicado; falta o token da Meta (tickets wf-pabxzap-20 e 22) |
 | `supabase/functions/_compartilhado/` | Banco (PostgREST), envio pela Meta e o orquestrador `executarEvento` (protocolo atômico) | pronto, com testes |
 | `scripts/numeros-de-teste.mjs` | Fase de teste: o número de teste da Meta faz o papel da Recepção (`npm run numeros:teste`) | aplicado |
-| `portal/` | Portal React/Vite | a fazer (ticket wf-pabxzap-23) |
+| `portal/` | Portal da Recepção (React/Vite + Supabase Auth): alertas com resgate, em andamento, histórico com indicadores, feriados, exclusão por telefone | pronto e testado localmente; falta publicar no Netlify (ticket wf-pabxzap-23) |
+| `supabase/functions/relogio/`, `resgatar/` | Relógio (pg_cron a cada minuto) e botão de resgate do portal | publicados (`npm run portal:funcoes`) |
 | `docs/` | Rascunhos de apoio (App Review etc.) | em andamento |
 
 ## Rodar os testes
@@ -37,3 +38,13 @@ Quem grava no banco e chama a API da Meta é a camada de fora. Assim as regras f
 ## Chaves
 
 Copie `.env.example` para `.env` e preencha. O `.env` está no `.gitignore`.
+
+## Portal
+
+```
+npm run portal                         # abre em http://localhost:5180 (lê SUPABASE_URL e a chave publicável do .env)
+npm run portal:usuario -- email@x.com  # cria a conta (ou redefine a senha) e mostra a senha uma vez
+npm run portal:funcoes                 # publica relogio e resgatar e agenda o relógio no pg_cron
+```
+
+Hospedagem: Netlify (`netlify.toml` na raiz, base `portal`), em portal.fl2engsys.com.br.

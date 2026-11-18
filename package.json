@@ -13,7 +13,11 @@
     "video:gravar": "node --env-file=.env tools/video-app-review/gravar.mjs",
     "webhook:publicar": "node --env-file=.env scripts/webhook-publicar.mjs",
     "webhook:conferir": "node --env-file=.env scripts/webhook-conferir.mjs",
-    "numeros:teste": "node --env-file=.env scripts/numeros-de-teste.mjs"
+    "numeros:teste": "node --env-file=.env scripts/numeros-de-teste.mjs",
+    "portal:funcoes": "node --env-file=.env scripts/relogio-agendar.mjs",
+    "portal:usuario": "node --env-file=.env scripts/portal-usuario.mjs",
+    "portal": "npm --prefix portal run dev",
+    "portal:build": "npm --prefix portal run build"
   },
   "engines": {
     "node": ">=22.18"
